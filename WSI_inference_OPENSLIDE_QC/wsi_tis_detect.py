@@ -20,6 +20,7 @@ DEVICE = 'cuda'
 MODEL_TD_DIR = './models/td/'
 MODEL_TD_NAME = 'Tissue_Detection_MPP10.pth'
 MPP_MODEL_TD = 10
+MPP_DEFAULT = 0.25
 M_P_S_MODEL_TD = 512
 ENCODER_MODEL_TD = 'timm-efficientnet-b0'
 ENCODER_MODEL_TD_WEIGHTS = 'imagenet'
@@ -79,7 +80,8 @@ for slide_name in slide_names:
         slide = OpenSlide(path_slide)
 
         w_l0, h_l0 = slide.level_dimensions[0]
-        mpp = round(float(slide.properties["openslide.mpp-x"]), 4)
+        mpp_str = slide.properties.get("openslide.mpp-x", MPP_DEFAULT)
+        mpp = round(float(mpp_str), 4)
         reduction_factor = MPP_MODEL_TD / mpp
 
         image_or = slide.get_thumbnail((w_l0 // reduction_factor, h_l0 // reduction_factor))
